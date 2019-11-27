@@ -1,0 +1,2 @@
+rootProject.name='LUASInfo'
+include ':app'
