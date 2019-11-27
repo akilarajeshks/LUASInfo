@@ -40,6 +40,11 @@ dependencies {
     //ViewModel dependencies
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.1.0'
 
+    // Koin for Android
+    def koin_version = "2.0.1"
+    implementation "org.koin:koin-android:$koin_version"
+    implementation 'org.koin:koin-androidx-viewmodel:2.0.1'
+
     //Navigation
     implementation 'androidx.navigation:navigation-fragment-ktx:2.1.0'
     implementation 'androidx.navigation:navigation-ui-ktx:2.1.0'

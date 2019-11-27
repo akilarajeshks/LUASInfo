@@ -1,5 +1,5 @@
 package com.zestworks.luasinfo
 
 interface Repository {
-    suspend fun getLUASForecast(stop: LUASInfoViewModel.Stops) : StopInfo
+    suspend fun getLUASForecast(stop: LUASInfoViewModel.Stops): LUASInfoViewModel.State
 }

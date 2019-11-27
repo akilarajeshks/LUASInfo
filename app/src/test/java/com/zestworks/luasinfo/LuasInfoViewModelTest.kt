@@ -1,6 +1,7 @@
 package com.zestworks.luasinfo
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import com.zestworks.luasinfo.LUASInfoViewModel.State.Success
 import io.kotlintest.shouldBe
 import io.mockk.every
 import io.mockk.mockk
@@ -20,7 +21,7 @@ import java.util.*
  *
  * See [testing documentation](http://d.android.com/tools/testing).
  */
-class ExampleUnitTest {
+class LuasInfoViewModelTest {
     @Rule
     @JvmField
     val instantExecutorRule = InstantTaskExecutorRule()
@@ -39,7 +40,7 @@ class ExampleUnitTest {
                 repository.getLUASForecast(LUASInfoViewModel.Stops.MAR)
             }
         }.returns(
-            marStopInfo
+            Success(marStopInfo)
         )
 
         every {
@@ -47,16 +48,19 @@ class ExampleUnitTest {
                 repository.getLUASForecast(LUASInfoViewModel.Stops.STI)
             }
         }.returns(
-            stiStopInfo
+            Success(stiStopInfo)
         )
 
     }
 
     @Test
-    fun testCalendar() {
-        val calendar = Calendar.getInstance()
-        viewModel.onUILoad(calendar)
-        viewModel.currentLuasInfo.value shouldBe marStopInfo
+    fun testBefore12() {
+        val calendarBefore12 = Calendar.getInstance()
+        calendarBefore12.set(Calendar.HOUR_OF_DAY, 11)
+        calendarBefore12.set(Calendar.SECOND, 59)
+        viewModel.onUILoad(calendarBefore12)
+
+        viewModel.currentLuasInfo.value shouldBe Success(marStopInfo)
     }
 
     @Test
@@ -66,7 +70,7 @@ class ExampleUnitTest {
         calendarAfter12.set(Calendar.SECOND, 1)
         viewModel.onUILoad(calendarAfter12)
 
-        viewModel.currentLuasInfo.value shouldBe stiStopInfo
+        viewModel.currentLuasInfo.value shouldBe Success(stiStopInfo)
     }
 
     @Test
@@ -76,7 +80,7 @@ class ExampleUnitTest {
         calendarAt12.set(Calendar.SECOND, 0)
         viewModel.onUILoad(calendarAt12.build())
 
-        viewModel.currentLuasInfo.value shouldBe marStopInfo
+        viewModel.currentLuasInfo.value shouldBe Success(marStopInfo)
 
     }
 

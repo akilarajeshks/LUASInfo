@@ -9,8 +9,14 @@ import java.util.*
 
 class LUASInfoViewModel(private val repository: Repository):ViewModel() {
 
-    private val _currentLuasInfo = MutableLiveData<StopInfo>()
-    val currentLuasInfo : LiveData<StopInfo> = _currentLuasInfo
+    sealed class State {
+        data class Success(val stopInfo: StopInfo) : State()
+        data class Error(val reason: String) : State()
+        object Loading : State()
+    }
+
+    private val _currentLuasInfo = MutableLiveData<State>()
+    val currentLuasInfo: LiveData<State> = _currentLuasInfo
 
     enum class Stops{
         MAR,
@@ -18,6 +24,7 @@ class LUASInfoViewModel(private val repository: Repository):ViewModel() {
     }
 
     fun onUILoad(calendar:Calendar) {
+        _currentLuasInfo.postValue(State.Loading)
         viewModelScope.launch {
             when (calendar.get(Calendar.HOUR_OF_DAY)) {
                 in 0..11 -> {
