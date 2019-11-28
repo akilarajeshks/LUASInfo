@@ -1,10 +1,13 @@
 package com.zestworks.luasinfo
 
 import com.zestworks.luasinfo.LUASInfoViewModel.State
+import retrofit2.awaitResponse
 
 class LUASInfoRepository(private val luasInfoService: LUASInfoService) : Repository {
     override suspend fun getLUASForecast(stop: LUASInfoViewModel.Stops): State {
-        val luasInfoResponse = luasInfoService.getLUASForecast(stop.name)
+        val luasInfoCall = luasInfoService.getLUASForecast(stop.name)
+
+        val luasInfoResponse = luasInfoCall.awaitResponse()
         return when {
             luasInfoResponse.isSuccessful -> {
                 if (luasInfoResponse.body() != null) {
@@ -17,5 +20,6 @@ class LUASInfoRepository(private val luasInfoService: LUASInfoService) : Reposit
                 State.Error(luasInfoResponse.message())
             }
         }
+
     }
 }

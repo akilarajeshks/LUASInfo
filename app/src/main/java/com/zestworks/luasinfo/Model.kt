@@ -1,34 +1,37 @@
 package com.zestworks.luasinfo
 
-import org.simpleframework.xml.Attribute
-import org.simpleframework.xml.Element
-import org.simpleframework.xml.ElementList
-import org.simpleframework.xml.Root
+import com.tickaroo.tikxml.annotation.Attribute
+import com.tickaroo.tikxml.annotation.Element
+import com.tickaroo.tikxml.annotation.PropertyElement
+import com.tickaroo.tikxml.annotation.Xml
 
-@Root(name = "stopInfo", strict = false)
-data class StopInfo(
-    @Attribute(required = false)
-    val stop: String?,
-    @Attribute(required = false)
-    val created: String?,
-    @Attribute(required = false)
-    val message: String?,
-    @Attribute(required = false)
-    val stopAbv: String?,
-    @ElementList
-    val direction: List<Direction>
-)
 
+@Xml
 data class Direction(
-    @Element(name = "name")
-    val name: String,
-    @Element(name = "tram")
-    val tram: Tram
+    @Attribute
+    var name: String?,
+    @Element
+    var tram: List<Tram>
 )
 
+@Xml
 data class Tram(
-    @Element(name = "destination")
-    val destination: String?,
-    @Element(name = "dueMins")
-    val dueMins: String?
+    @Attribute
+    var destination: String?,
+    @Attribute
+    var dueMins: String?
+)
+
+@Xml
+data class StopInfo(
+    @Attribute
+    var stop: String?,
+    @Attribute
+    var created: String?,
+    @PropertyElement
+    var message: String?,
+    @Attribute
+    var stopAbv: String?,
+    @Element
+    var direction: List<Direction>
 )

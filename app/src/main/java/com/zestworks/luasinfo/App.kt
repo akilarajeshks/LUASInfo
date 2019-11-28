@@ -3,12 +3,13 @@
 package com.zestworks.luasinfo
 
 import android.app.Application
+import com.tickaroo.tikxml.TikXml
+import com.tickaroo.tikxml.retrofit.TikXmlConverterFactory
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
 import retrofit2.Retrofit
-import retrofit2.converter.simplexml.SimpleXmlConverterFactory
 
 class App : Application() {
 
@@ -37,7 +38,13 @@ class App : Application() {
 
         return Retrofit.Builder()
             .baseUrl(baseUrl)
-            .addConverterFactory(SimpleXmlConverterFactory.create())
+            .addConverterFactory(
+                TikXmlConverterFactory.create(
+                    TikXml.Builder().exceptionOnUnreadXml(
+                        false
+                    ).build()
+                )
+            )
             .build()
     }
 }

@@ -28,15 +28,15 @@ class LUASInfoViewModel(private val repository: Repository):ViewModel() {
         viewModelScope.launch {
             when (calendar.get(Calendar.HOUR_OF_DAY)) {
                 in 0..11 -> {
-                    _currentLuasInfo.postValue(repository.getLUASForecast(Stops.MAR))
+                    _currentLuasInfo.value = repository.getLUASForecast(Stops.MAR)
                 }
                 in 13..23 -> {
-                    _currentLuasInfo.postValue(repository.getLUASForecast(Stops.STI))
+                    _currentLuasInfo.value = repository.getLUASForecast(Stops.STI)
                 }
                 12 -> {
                     when (calendar.get(Calendar.SECOND)) {
-                        0 -> _currentLuasInfo.postValue(repository.getLUASForecast(Stops.MAR))
-                        else -> _currentLuasInfo.postValue(repository.getLUASForecast(Stops.STI))
+                        0 -> _currentLuasInfo.value = repository.getLUASForecast(Stops.MAR)
+                        else -> _currentLuasInfo.value = repository.getLUASForecast(Stops.STI)
                     }
                 }
             }

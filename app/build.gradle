@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion 29
@@ -51,7 +52,14 @@ dependencies {
 
     //Retrofit
     implementation "com.squareup.retrofit2:retrofit:2.6.1"
-    implementation "com.squareup.retrofit2:converter-simplexml:2.6.1"
+    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
+
+    implementation 'com.github.Tickaroo.tikxml:annotation:0.8.15'
+    implementation 'com.github.Tickaroo.tikxml:core:0.8.15'
+    kapt 'com.github.Tickaroo.tikxml:processor-common:0.8.15'
+    kapt 'com.github.Tickaroo.tikxml:processor:0.8.15'
+    implementation "com.github.Tickaroo.tikxml:retrofit-converter:0.8.15"
+
 
     //Test dependencies
     testImplementation "androidx.arch.core:core-testing:2.1.0"
@@ -60,4 +68,8 @@ dependencies {
 
     testImplementation "io.mockk:mockk:1.9.3.kotlin12"
     testImplementation 'io.kotlintest:kotlintest-runner-junit5:3.3.2'
+
+//Duplicate class com.google.common.util.concurrent.internal.InternalFutureFailureAccess found in modules jetified-failureaccess-1.0.jar (com.google.guava:failureaccess:1.0) and jetified-guava-27.0-jre.jar (com.google.guava:guava:27.0-jre)
+    implementation 'com.google.guava:guava:27.0.1-android'
+
 }
