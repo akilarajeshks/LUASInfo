@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import kotlinx.android.synthetic.main.fragment_luas_info.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -32,20 +33,51 @@ class LUASInfoFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
     override fun onStart() {
         super.onStart()
 
-        luasInfoViewModel.currentLuasInfo.observe(this, Observer {
+        luasInfoViewModel.currentLuasInfo.observe(this, Observer { it ->
             when (it) {
                 is LUASInfoViewModel.State.Success -> {
-                    it.stopInfo.direction.forEach { direction ->
-                        if (direction.name == "Inbound") {
-                            textview.text = it.stopInfo.toString()
+                    list_group.visibility = View.VISIBLE
+                    text_error.visibility = View.GONE
+                    loader.visibility = View.GONE
+
+                    tram_search_time.text = it.stopInfo.created!!.split("T").last()
+                    tram_stop_text_view.text = it.stopInfo.stop
+
+                    if (it.stopInfo.stopAbv != null && it.stopInfo.stopAbv == LUASInfoViewModel.Stops.STI.name || it.stopInfo.stop == "Stillorgan") {
+
+                        if (recycler_tram.adapter == null) {
+                            recycler_tram.apply {
+                                adapter =
+                                    LuasInfoAdapter(it.stopInfo.direction.filter { it.name == "Inbound" }.flatMap { it.tram })
+                                layoutManager = LinearLayoutManager(context)
+                            }
+                        } else {
+                            (recycler_tram.adapter as LuasInfoAdapter).setTramList(it.stopInfo.direction.filter { it.name == "Inbound" }.flatMap { it.tram })
+                            (recycler_tram.adapter as LuasInfoAdapter).notifyDataSetChanged()
+                        }
+                    } else if (it.stopInfo.stopAbv != null && it.stopInfo.stopAbv == LUASInfoViewModel.Stops.MAR.name || it.stopInfo.stop == "Still") {
+
+                        if (recycler_tram.adapter == null) {
+                            recycler_tram.apply {
+                                adapter =
+                                    LuasInfoAdapter(it.stopInfo.direction.filter { it.name == "Outbound" }.flatMap { it.tram })
+                                layoutManager = LinearLayoutManager(context)
+                            }
+                        } else {
+                            (recycler_tram.adapter as LuasInfoAdapter).setTramList(it.stopInfo.direction.filter { it.name == "Outbound" }.flatMap { it.tram })
+                            (recycler_tram.adapter as LuasInfoAdapter).notifyDataSetChanged()
                         }
                     }
                 }
                 is LUASInfoViewModel.State.Error -> {
-                    textview.text = it.reason
+                    text_error.visibility = View.VISIBLE
+                    list_group.visibility = View.GONE
+                    loader.visibility = View.GONE
                 }
                 LUASInfoViewModel.State.Loading -> {
-
+                    list_group.visibility = View.GONE
+                    text_error.visibility = View.GONE
+                    loader.visibility = View.VISIBLE
                 }
             }
         })

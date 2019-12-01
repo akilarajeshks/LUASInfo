@@ -1,6 +1,7 @@
 package com.zestworks.luasinfo
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import com.zestworks.luasinfo.LUASInfoViewModel.State.Error
 import com.zestworks.luasinfo.LUASInfoViewModel.State.Success
 import io.kotlintest.shouldBe
 import io.mockk.every
@@ -54,7 +55,7 @@ class LuasInfoViewModelTest {
     }
 
     @Test
-    fun testBefore12() {
+    fun `Test whether return data is correct - BEFORE 12PM`() {
         val calendarBefore12 = Calendar.getInstance()
         calendarBefore12.set(Calendar.HOUR_OF_DAY, 11)
         calendarBefore12.set(Calendar.SECOND, 59)
@@ -64,7 +65,7 @@ class LuasInfoViewModelTest {
     }
 
     @Test
-    fun testAfter12() {
+    fun `Test whether return data is correct - AFTER 12PM`() {
         val calendarAfter12 = Calendar.getInstance()
         calendarAfter12.set(Calendar.HOUR_OF_DAY, 12)
         calendarAfter12.set(Calendar.SECOND, 1)
@@ -74,14 +75,32 @@ class LuasInfoViewModelTest {
     }
 
     @Test
-    fun testAT12() {
+    fun `Test whether return data is correct - AT 12PM`() {
         val calendarAt12 = Calendar.Builder()
         calendarAt12.set(Calendar.HOUR_OF_DAY, 12)
         calendarAt12.set(Calendar.SECOND, 0)
         viewModel.onUILoad(calendarAt12.build())
 
         viewModel.currentLuasInfo.value shouldBe Success(marStopInfo)
+    }
 
+    @Test
+    fun `Test ERROR response`() {
+        val reason = "Something went wrong"
+        every {
+            runBlocking {
+                repository.getLUASForecast(LUASInfoViewModel.Stops.STI)
+            }
+        }.returns(
+            Error(reason)
+        )
+
+        val calendarAfter12 = Calendar.getInstance()
+        calendarAfter12.set(Calendar.HOUR_OF_DAY, 12)
+        calendarAfter12.set(Calendar.SECOND, 1)
+        viewModel.onUILoad(calendarAfter12)
+
+        viewModel.currentLuasInfo.value shouldBe Error(reason)
     }
 
     @ExperimentalCoroutinesApi

@@ -8,10 +8,13 @@ package com.zestworks.luasinfo
     direction =
     listOf(
         Direction(name = "Outbound",
-            tram = Tram(
-                destination = " ",
-                dueMins = " "
-            ))
+            tram = listOf(
+                Tram(
+                    destination = " ",
+                    dueMins = " "
+                )
+            )
+        )
     ))
 
  val stiStopInfo = StopInfo(
@@ -22,9 +25,12 @@ package com.zestworks.luasinfo
     direction =
     listOf(
         Direction(name = "Inbound",
-            tram = Tram(
-                destination = " ",
-                dueMins = " "
-            ))
+            tram = listOf(
+                Tram(
+                    destination = " ",
+                    dueMins = " "
+                )
+            )
+        )
     )
 )

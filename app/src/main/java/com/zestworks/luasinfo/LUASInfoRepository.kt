@@ -5,21 +5,24 @@ import retrofit2.awaitResponse
 
 class LUASInfoRepository(private val luasInfoService: LUASInfoService) : Repository {
     override suspend fun getLUASForecast(stop: LUASInfoViewModel.Stops): State {
-        val luasInfoCall = luasInfoService.getLUASForecast(stop.name)
+        try {
+            val luasInfoCall = luasInfoService.getLUASForecast(stop.name)
 
-        val luasInfoResponse = luasInfoCall.awaitResponse()
-        return when {
-            luasInfoResponse.isSuccessful -> {
-                if (luasInfoResponse.body() != null) {
-                    State.Success(luasInfoResponse.body()!!)
-                } else {
-                    State.Error("Response body is null")
+            val luasInfoResponse = luasInfoCall.awaitResponse()
+            return when {
+                luasInfoResponse.isSuccessful -> {
+                    if (luasInfoResponse.body() != null) {
+                        State.Success(luasInfoResponse.body()!!)
+                    } else {
+                        State.Error("Response body is null")
+                    }
+                }
+                else -> {
+                    State.Error(luasInfoResponse.message())
                 }
             }
-            else -> {
-                State.Error(luasInfoResponse.message())
-            }
+        } catch (exception: Exception) {
+            return State.Error(exception.toString())
         }
-
     }
 }
