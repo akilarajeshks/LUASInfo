@@ -1,7 +1,5 @@
 <resources>
     <string name="app_name">LUASInfo</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="oops_something_went_wrong_swipe_down_to_refresh">OOPS! Something went wrong, Check network and refresh</string>
 </resources>
