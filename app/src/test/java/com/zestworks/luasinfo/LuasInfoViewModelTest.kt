@@ -3,8 +3,6 @@ package com.zestworks.luasinfo
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.zestworks.luasinfo.listing.ListingRepository
 import com.zestworks.luasinfo.listing.ListingViewModel
-import com.zestworks.luasinfo.listing.ListingViewModel.State.Error
-import com.zestworks.luasinfo.listing.ListingViewModel.State.Success
 import io.kotlintest.shouldBe
 import io.mockk.every
 import io.mockk.mockk
@@ -43,7 +41,7 @@ class LuasInfoViewModelTest {
                 repository.getLUASForecast(ListingViewModel.Stops.MAR)
             }
         }.returns(
-            Success(marStopInfo)
+            NetworkState.Success(marStopInfo)
         )
 
         every {
@@ -51,7 +49,7 @@ class LuasInfoViewModelTest {
                 repository.getLUASForecast(ListingViewModel.Stops.STI)
             }
         }.returns(
-            Success(stiStopInfo)
+            NetworkState.Success(stiStopInfo)
         )
 
     }
@@ -60,30 +58,39 @@ class LuasInfoViewModelTest {
     fun `Test whether return data is correct - BEFORE 12PM`() {
         val calendarBefore12 = Calendar.getInstance()
         calendarBefore12.set(Calendar.HOUR_OF_DAY, 11)
-        calendarBefore12.set(Calendar.SECOND, 59)
+        calendarBefore12.set(Calendar.MINUTE, 59)
         viewModel.onUILoad(calendarBefore12)
 
-        viewModel.currentLuasInfo.value shouldBe Success(marStopInfo)
+        val currentState = viewModel.currentLuasInfo.value
+        (currentState is ViewState.Content) shouldBe true
+        (currentState as ViewState.Content).viewData.stopName shouldBe ListingViewModel.Stops.MAR.name
+        currentState.viewData.trams shouldBe marStopInfo.direction.filter { it.name == "Outbound" }.flatMap { it.tram }
     }
 
     @Test
     fun `Test whether return data is correct - AFTER 12PM`() {
         val calendarAfter12 = Calendar.getInstance()
         calendarAfter12.set(Calendar.HOUR_OF_DAY, 12)
-        calendarAfter12.set(Calendar.SECOND, 1)
+        calendarAfter12.set(Calendar.MINUTE, 1)
         viewModel.onUILoad(calendarAfter12)
 
-        viewModel.currentLuasInfo.value shouldBe Success(stiStopInfo)
+        val currentState = viewModel.currentLuasInfo.value
+        (currentState is ViewState.Content) shouldBe true
+        (currentState as ViewState.Content).viewData.stopName shouldBe ListingViewModel.Stops.STI.name
+        currentState.viewData.trams shouldBe stiStopInfo.direction.filter { it.name == "Inbound" }.flatMap { it.tram }
     }
 
     @Test
     fun `Test whether return data is correct - AT 12PM`() {
         val calendarAt12 = Calendar.Builder()
         calendarAt12.set(Calendar.HOUR_OF_DAY, 12)
-        calendarAt12.set(Calendar.SECOND, 0)
+        calendarAt12.set(Calendar.MINUTE, 0)
         viewModel.onUILoad(calendarAt12.build())
 
-        viewModel.currentLuasInfo.value shouldBe Success(marStopInfo)
+        val currentState = viewModel.currentLuasInfo.value
+        (currentState is ViewState.Content) shouldBe true
+        (currentState as ViewState.Content).viewData.stopName shouldBe ListingViewModel.Stops.MAR.name
+        currentState.viewData.trams shouldBe marStopInfo.direction.filter { it.name == "Outbound" }.flatMap { it.tram }
     }
 
     @Test
@@ -94,15 +101,16 @@ class LuasInfoViewModelTest {
                 repository.getLUASForecast(ListingViewModel.Stops.STI)
             }
         }.returns(
-            Error(reason)
+            NetworkState.Error(reason)
         )
 
         val calendarAfter12 = Calendar.getInstance()
         calendarAfter12.set(Calendar.HOUR_OF_DAY, 12)
-        calendarAfter12.set(Calendar.SECOND, 1)
+        calendarAfter12.set(Calendar.MINUTE, 1)
         viewModel.onUILoad(calendarAfter12)
 
-        viewModel.currentLuasInfo.value shouldBe Error(reason)
+        (viewModel.currentLuasInfo.value is ViewState.Error) shouldBe true
+        (viewModel.currentLuasInfo.value as ViewState.Error).reason shouldBe reason
     }
 
     @ExperimentalCoroutinesApi

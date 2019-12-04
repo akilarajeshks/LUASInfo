@@ -1,28 +1,28 @@
 package com.zestworks.luasinfo.listing
 
-import com.zestworks.luasinfo.listing.ListingViewModel.State
+import com.zestworks.luasinfo.NetworkState
 import retrofit2.awaitResponse
 
 class NetworkListingRepository(private val listingService: ListingService) :
     ListingRepository {
-    override suspend fun getLUASForecast(stop: ListingViewModel.Stops): State {
+    override suspend fun getLUASForecast(stop: ListingViewModel.Stops): NetworkState<StopInfo> {
         try {
             val luasInfoCall = listingService.getLUASForecast(stop.name)
             val luasInfoResponse = luasInfoCall.awaitResponse()
             return when {
                 luasInfoResponse.isSuccessful -> {
                     if (luasInfoResponse.body() != null) {
-                        State.Success(luasInfoResponse.body()!!)
+                        NetworkState.Success(luasInfoResponse.body()!!)
                     } else {
-                        State.Error("Response body is null")
+                        NetworkState.Error("Response body is null")
                     }
                 }
                 else -> {
-                    State.Error(luasInfoResponse.message())
+                    NetworkState.Error(luasInfoResponse.message())
                 }
             }
         } catch (exception: Exception) {
-            return State.Error(exception.toString())
+            return NetworkState.Error(exception.toString())
         }
     }
 }

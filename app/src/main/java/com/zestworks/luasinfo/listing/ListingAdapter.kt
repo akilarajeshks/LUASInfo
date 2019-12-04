@@ -4,7 +4,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.core.text.isDigitsOnly
 import androidx.recyclerview.widget.RecyclerView
 import com.zestworks.luasinfo.R
 
@@ -24,11 +23,7 @@ class ListingAdapter(private var listOfTrams: List<Tram>) :
 
     override fun onBindViewHolder(holder: ListingViewHolder, position: Int) {
         holder.destination.text = listOfTrams[position].destination
-        if (listOfTrams[position].dueMins!!.isDigitsOnly()) {
-            holder.eta.text = listOfTrams[position].dueMins.plus(" min")
-        } else {
-            holder.eta.text = listOfTrams[position].dueMins
-        }
+        holder.eta.text = listOfTrams[position].dueMins
     }
 
     fun setTramList(tramList: List<Tram>) {

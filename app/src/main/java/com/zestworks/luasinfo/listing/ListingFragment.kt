@@ -9,6 +9,7 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.zestworks.luasinfo.R
+import com.zestworks.luasinfo.ViewState
 import kotlinx.android.synthetic.main.fragment_luas_info.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.*
@@ -31,50 +32,36 @@ class ListingFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         swipe_refresh_layout.setOnRefreshListener(this)
         listingViewModel.currentLuasInfo.observe(this, Observer { it ->
             when (it) {
-                is ListingViewModel.State.Success -> {
+                is ViewState.Content -> {
                     list_group.visibility = View.VISIBLE
                     text_error.visibility = View.GONE
                     loader.visibility = View.GONE
                     swipe_refresh_layout.isRefreshing = false
 
-                    tram_search_time.text = it.stopInfo.created!!.split("T").last()
-                    tram_stop_text_view.text = it.stopInfo.stop
+                    tram_search_time.text = it.viewData.time
+                    tram_stop_text_view.text = it.viewData.stopName
 
-                    if (it.stopInfo.stopAbv != null && it.stopInfo.stopAbv == ListingViewModel.Stops.STI.name || it.stopInfo.stop == "Stillorgan") {
 
-                        if (recycler_tram.adapter == null) {
-                            recycler_tram.apply {
-                                adapter =
-                                    ListingAdapter(
-                                        it.stopInfo.direction.filter { it.name == "Inbound" }.flatMap { it.tram })
-                                layoutManager = LinearLayoutManager(context)
-                            }
-                        } else {
-                            (recycler_tram.adapter as ListingAdapter).setTramList(it.stopInfo.direction.filter { it.name == "Inbound" }.flatMap { it.tram })
-                            (recycler_tram.adapter as ListingAdapter).notifyDataSetChanged()
+                    if (recycler_tram.adapter == null) {
+                        recycler_tram.apply {
+                            adapter =
+                                ListingAdapter(
+                                    it.viewData.trams
+                                )
+                            layoutManager = LinearLayoutManager(context)
                         }
-                    } else if (it.stopInfo.stopAbv != null && it.stopInfo.stopAbv == ListingViewModel.Stops.MAR.name || it.stopInfo.stop == "Still") {
-
-                        if (recycler_tram.adapter == null) {
-                            recycler_tram.apply {
-                                adapter =
-                                    ListingAdapter(
-                                        it.stopInfo.direction.filter { it.name == "Outbound" }.flatMap { it.tram })
-                                layoutManager = LinearLayoutManager(context)
-                            }
-                        } else {
-                            (recycler_tram.adapter as ListingAdapter).setTramList(it.stopInfo.direction.filter { it.name == "Outbound" }.flatMap { it.tram })
-                            (recycler_tram.adapter as ListingAdapter).notifyDataSetChanged()
-                        }
+                    } else {
+                        (recycler_tram.adapter as ListingAdapter).setTramList(it.viewData.trams)
+                        (recycler_tram.adapter as ListingAdapter).notifyDataSetChanged()
                     }
                 }
-                is ListingViewModel.State.Error -> {
+                is ViewState.Error -> {
                     text_error.visibility = View.VISIBLE
                     list_group.visibility = View.GONE
                     loader.visibility = View.GONE
                     swipe_refresh_layout.isRefreshing = false
                 }
-                ListingViewModel.State.Loading -> {
+                ViewState.Loading -> {
                     list_group.visibility = View.GONE
                     text_error.visibility = View.GONE
                     loader.visibility = View.VISIBLE

@@ -9,7 +9,7 @@ import com.tickaroo.tikxml.annotation.Xml
 @Xml
 data class Direction(
     @Attribute
-    var name: String?,
+    var name: String = "",
     @Element
     var tram: List<Tram>
 )
@@ -17,21 +17,27 @@ data class Direction(
 @Xml
 data class Tram(
     @Attribute
-    var destination: String?,
+    var destination: String = "",
     @Attribute
-    var dueMins: String?
+    var dueMins: String = ""
 )
 
 @Xml
 data class StopInfo(
     @Attribute
-    var stop: String?,
+    var stop: String = "",
     @Attribute
-    var created: String?,
+    var created: String = "",
     @PropertyElement
-    var message: String?,
+    var message: String = "",
     @Attribute
-    var stopAbv: String?,
+    var stopAbv: String = "",
     @Element
     var direction: List<Direction>
+)
+
+data class ViewData(
+    val stopName: String,
+    var trams: List<Tram>,
+    val time: String
 )
