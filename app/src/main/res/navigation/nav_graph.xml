@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/LUASInfoFragment"
-        android:name="com.zestworks.luasinfo.LUASInfoFragment"
+        android:name="com.zestworks.luasinfo.listing.ListingFragment"
         android:label="fragment_luas_info"
         tools:layout="@layout/fragment_luas_info" />
 </navigation>

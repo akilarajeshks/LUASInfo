@@ -19,7 +19,8 @@
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:layout_weight="1"
-            android:textAlignment="center"
+            android:gravity="center_vertical|center_horizontal"
+            android:textAlignment="gravity"
             android:textSize="20sp"
             tools:text="DEST" />
 
@@ -28,7 +29,8 @@
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:layout_weight="1"
-            android:textAlignment="center"
+            android:gravity="center_vertical|center_horizontal"
+            android:textAlignment="gravity"
             android:textSize="20sp"
             tools:text="ETA" />
     </LinearLayout>

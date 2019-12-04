@@ -1,8 +1,10 @@
 package com.zestworks.luasinfo
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.zestworks.luasinfo.LUASInfoViewModel.State.Error
-import com.zestworks.luasinfo.LUASInfoViewModel.State.Success
+import com.zestworks.luasinfo.listing.ListingRepository
+import com.zestworks.luasinfo.listing.ListingViewModel
+import com.zestworks.luasinfo.listing.ListingViewModel.State.Error
+import com.zestworks.luasinfo.listing.ListingViewModel.State.Success
 import io.kotlintest.shouldBe
 import io.mockk.every
 import io.mockk.mockk
@@ -26,19 +28,19 @@ class LuasInfoViewModelTest {
     @Rule
     @JvmField
     val instantExecutorRule = InstantTaskExecutorRule()
-    private val repository = mockk<Repository>()
-    private lateinit var viewModel: LUASInfoViewModel
+    private val repository = mockk<ListingRepository>()
+    private lateinit var viewModel: ListingViewModel
 
 
     @ExperimentalCoroutinesApi
     @Before
     fun setUp() {
-        viewModel = LUASInfoViewModel(repository)
+        viewModel = ListingViewModel(repository)
         Dispatchers.setMain(Dispatchers.Unconfined)
 
         every {
             runBlocking {
-                repository.getLUASForecast(LUASInfoViewModel.Stops.MAR)
+                repository.getLUASForecast(ListingViewModel.Stops.MAR)
             }
         }.returns(
             Success(marStopInfo)
@@ -46,7 +48,7 @@ class LuasInfoViewModelTest {
 
         every {
             runBlocking {
-                repository.getLUASForecast(LUASInfoViewModel.Stops.STI)
+                repository.getLUASForecast(ListingViewModel.Stops.STI)
             }
         }.returns(
             Success(stiStopInfo)
@@ -89,7 +91,7 @@ class LuasInfoViewModelTest {
         val reason = "Something went wrong"
         every {
             runBlocking {
-                repository.getLUASForecast(LUASInfoViewModel.Stops.STI)
+                repository.getLUASForecast(ListingViewModel.Stops.STI)
             }
         }.returns(
             Error(reason)

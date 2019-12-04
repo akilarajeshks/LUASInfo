@@ -1,13 +1,13 @@
-package com.zestworks.luasinfo
+package com.zestworks.luasinfo.listing
 
-import com.zestworks.luasinfo.LUASInfoViewModel.State
+import com.zestworks.luasinfo.listing.ListingViewModel.State
 import retrofit2.awaitResponse
 
-class LUASInfoRepository(private val luasInfoService: LUASInfoService) : Repository {
-    override suspend fun getLUASForecast(stop: LUASInfoViewModel.Stops): State {
+class NetworkListingRepository(private val listingService: ListingService) :
+    ListingRepository {
+    override suspend fun getLUASForecast(stop: ListingViewModel.Stops): State {
         try {
-            val luasInfoCall = luasInfoService.getLUASForecast(stop.name)
-
+            val luasInfoCall = listingService.getLUASForecast(stop.name)
             val luasInfoResponse = luasInfoCall.awaitResponse()
             return when {
                 luasInfoResponse.isSuccessful -> {

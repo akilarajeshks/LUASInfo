@@ -1,4 +1,4 @@
-package com.zestworks.luasinfo
+package com.zestworks.luasinfo.listing
 
 import com.tickaroo.tikxml.annotation.Attribute
 import com.tickaroo.tikxml.annotation.Element
