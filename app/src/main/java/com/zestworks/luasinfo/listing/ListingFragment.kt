@@ -9,7 +9,7 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.zestworks.luasinfo.R
-import com.zestworks.luasinfo.ViewState
+import com.zestworks.luasinfo.common.ViewState
 import kotlinx.android.synthetic.main.fragment_luas_info.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.*
@@ -22,10 +22,7 @@ class ListingFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_luas_info, container, false)
-    }
+    ): View? = inflater.inflate(R.layout.fragment_luas_info, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -38,21 +35,23 @@ class ListingFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
                     loader.visibility = View.GONE
                     swipe_refresh_layout.isRefreshing = false
 
-                    tram_search_time.text = it.viewData.time
-                    tram_stop_text_view.text = it.viewData.stopName
+                    tram_search_time.text = it.listingViewData.time
+                    tram_stop_text_view.text = it.listingViewData.stopName
 
 
                     if (recycler_tram.adapter == null) {
                         recycler_tram.apply {
                             adapter =
                                 ListingAdapter(
-                                    it.viewData.trams
+                                    it.listingViewData.trams
                                 )
                             layoutManager = LinearLayoutManager(context)
                         }
                     } else {
-                        (recycler_tram.adapter as ListingAdapter).setTramList(it.viewData.trams)
-                        (recycler_tram.adapter as ListingAdapter).notifyDataSetChanged()
+                        (recycler_tram.adapter as ListingAdapter).apply {
+                            setTramList(it.listingViewData.trams)
+                            notifyDataSetChanged()
+                        }
                     }
                 }
                 is ViewState.Error -> {

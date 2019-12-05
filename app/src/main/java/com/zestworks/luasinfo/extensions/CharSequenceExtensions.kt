@@ -1,4 +1,4 @@
-package com.zestworks.luasinfo.extensionsUtil
+package com.zestworks.luasinfo.extensions
 
 fun CharSequence.isDigitsOnly(): Boolean {
     val len = length

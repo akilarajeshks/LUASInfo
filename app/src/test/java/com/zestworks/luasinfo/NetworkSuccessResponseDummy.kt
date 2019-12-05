@@ -1,12 +1,12 @@
 package com.zestworks.luasinfo
 
 import com.zestworks.luasinfo.listing.Direction
-import com.zestworks.luasinfo.listing.ListingViewModel
 import com.zestworks.luasinfo.listing.StopInfo
+import com.zestworks.luasinfo.listing.Stops
 import com.zestworks.luasinfo.listing.Tram
 
 val marStopInfo = StopInfo(
-    stop = ListingViewModel.Stops.MAR.name,
+    stop = Stops.MAR.name,
     created = "",
     message = "",
     stopAbv = "mar",
@@ -25,7 +25,7 @@ val marStopInfo = StopInfo(
 )
 
  val stiStopInfo = StopInfo(
-     stop = ListingViewModel.Stops.STI.name,
+     stop = Stops.STI.name,
      created = "",
      message = "",
      stopAbv = "sti",

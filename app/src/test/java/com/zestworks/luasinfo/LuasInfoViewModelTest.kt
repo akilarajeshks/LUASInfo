@@ -1,8 +1,11 @@
 package com.zestworks.luasinfo
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import com.zestworks.luasinfo.common.NetworkResult
+import com.zestworks.luasinfo.common.ViewState
 import com.zestworks.luasinfo.listing.ListingRepository
 import com.zestworks.luasinfo.listing.ListingViewModel
+import com.zestworks.luasinfo.listing.Stops
 import io.kotlintest.shouldBe
 import io.mockk.every
 import io.mockk.mockk
@@ -38,18 +41,18 @@ class LuasInfoViewModelTest {
 
         every {
             runBlocking {
-                repository.getLUASForecast(ListingViewModel.Stops.MAR)
+                repository.getLUASForecast(Stops.MAR)
             }
         }.returns(
-            NetworkState.Success(marStopInfo)
+            NetworkResult.Success(marStopInfo)
         )
 
         every {
             runBlocking {
-                repository.getLUASForecast(ListingViewModel.Stops.STI)
+                repository.getLUASForecast(Stops.STI)
             }
         }.returns(
-            NetworkState.Success(stiStopInfo)
+            NetworkResult.Success(stiStopInfo)
         )
 
     }
@@ -63,8 +66,8 @@ class LuasInfoViewModelTest {
 
         val currentState = viewModel.currentLuasInfo.value
         (currentState is ViewState.Content) shouldBe true
-        (currentState as ViewState.Content).viewData.stopName shouldBe ListingViewModel.Stops.MAR.name
-        currentState.viewData.trams shouldBe marStopInfo.direction.filter { it.name == "Outbound" }.flatMap { it.tram }
+        (currentState as ViewState.Content).listingViewData.stopName shouldBe Stops.MAR.name
+        currentState.listingViewData.trams shouldBe marStopInfo.direction.filter { it.name == "Outbound" }.flatMap { it.tram }
     }
 
     @Test
@@ -76,8 +79,8 @@ class LuasInfoViewModelTest {
 
         val currentState = viewModel.currentLuasInfo.value
         (currentState is ViewState.Content) shouldBe true
-        (currentState as ViewState.Content).viewData.stopName shouldBe ListingViewModel.Stops.STI.name
-        currentState.viewData.trams shouldBe stiStopInfo.direction.filter { it.name == "Inbound" }.flatMap { it.tram }
+        (currentState as ViewState.Content).listingViewData.stopName shouldBe Stops.STI.name
+        currentState.listingViewData.trams shouldBe stiStopInfo.direction.filter { it.name == "Inbound" }.flatMap { it.tram }
     }
 
     @Test
@@ -89,8 +92,8 @@ class LuasInfoViewModelTest {
 
         val currentState = viewModel.currentLuasInfo.value
         (currentState is ViewState.Content) shouldBe true
-        (currentState as ViewState.Content).viewData.stopName shouldBe ListingViewModel.Stops.MAR.name
-        currentState.viewData.trams shouldBe marStopInfo.direction.filter { it.name == "Outbound" }.flatMap { it.tram }
+        (currentState as ViewState.Content).listingViewData.stopName shouldBe Stops.MAR.name
+        currentState.listingViewData.trams shouldBe marStopInfo.direction.filter { it.name == "Outbound" }.flatMap { it.tram }
     }
 
     @Test
@@ -98,10 +101,10 @@ class LuasInfoViewModelTest {
         val reason = "Something went wrong"
         every {
             runBlocking {
-                repository.getLUASForecast(ListingViewModel.Stops.STI)
+                repository.getLUASForecast(Stops.STI)
             }
         }.returns(
-            NetworkState.Error(reason)
+            NetworkResult.Error(reason)
         )
 
         val calendarAfter12 = Calendar.getInstance()

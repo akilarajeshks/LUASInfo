@@ -35,9 +35,3 @@ data class StopInfo(
     @Element
     var direction: List<Direction>
 )
-
-data class ViewData(
-    val stopName: String,
-    var trams: List<Tram>,
-    val time: String
-)

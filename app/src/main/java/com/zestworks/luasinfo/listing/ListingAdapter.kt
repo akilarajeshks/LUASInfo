@@ -28,7 +28,6 @@ class ListingAdapter(private var listOfTrams: List<Tram>) :
 
     fun setTramList(tramList: List<Tram>) {
         listOfTrams = tramList
-        notifyDataSetChanged()
     }
 
     inner class ListingViewHolder(view: View) : RecyclerView.ViewHolder(view) {

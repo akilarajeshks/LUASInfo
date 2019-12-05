@@ -58,6 +58,7 @@ dependencies {
     implementation "com.squareup.retrofit2:retrofit:2.6.1"
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
 
+    //Tikxml
     implementation 'com.github.Tickaroo.tikxml:annotation:0.8.15'
     implementation 'com.github.Tickaroo.tikxml:core:0.8.15'
     kapt 'com.github.Tickaroo.tikxml:processor-common:0.8.15'
