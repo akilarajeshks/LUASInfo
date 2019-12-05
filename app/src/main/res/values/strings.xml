@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name">LUASInfo</string>
-
     <string name="oops_something_went_wrong_swipe_down_to_refresh">OOPS! Something went wrong, Check network and refresh</string>
+    <string name="due_mins">%1$s min</string>
 </resources>

@@ -6,6 +6,7 @@ import com.zestworks.luasinfo.common.ViewState
 import com.zestworks.luasinfo.listing.ListingRepository
 import com.zestworks.luasinfo.listing.ListingViewModel
 import com.zestworks.luasinfo.listing.Stops
+import io.kotlintest.matchers.collections.shouldContainAll
 import io.kotlintest.shouldBe
 import io.mockk.every
 import io.mockk.mockk
@@ -20,11 +21,6 @@ import org.junit.Rule
 import org.junit.Test
 import java.util.*
 
-/**
- * Example local unit test, which will execute on the development machine (host).
- *
- * See [testing documentation](http://d.android.com/tools/testing).
- */
 class LuasInfoViewModelTest {
     @Rule
     @JvmField
@@ -66,8 +62,9 @@ class LuasInfoViewModelTest {
 
         val currentState = viewModel.currentLuasInfo.value
         (currentState is ViewState.Content) shouldBe true
-        (currentState as ViewState.Content).listingViewData.stopName shouldBe Stops.MAR.name
-        currentState.listingViewData.trams shouldBe marStopInfo.direction.filter { it.name == "Outbound" }.flatMap { it.tram }
+        (currentState as ViewState.Content).viewData.stopName shouldBe Stops.MAR.name
+
+        currentState.viewData.trams shouldContainAll outboundViewList
     }
 
     @Test
@@ -79,8 +76,8 @@ class LuasInfoViewModelTest {
 
         val currentState = viewModel.currentLuasInfo.value
         (currentState is ViewState.Content) shouldBe true
-        (currentState as ViewState.Content).listingViewData.stopName shouldBe Stops.STI.name
-        currentState.listingViewData.trams shouldBe stiStopInfo.direction.filter { it.name == "Inbound" }.flatMap { it.tram }
+        (currentState as ViewState.Content).viewData.stopName shouldBe Stops.STI.name
+        currentState.viewData.trams shouldContainAll inboundViewList
     }
 
     @Test
@@ -92,8 +89,8 @@ class LuasInfoViewModelTest {
 
         val currentState = viewModel.currentLuasInfo.value
         (currentState is ViewState.Content) shouldBe true
-        (currentState as ViewState.Content).listingViewData.stopName shouldBe Stops.MAR.name
-        currentState.listingViewData.trams shouldBe marStopInfo.direction.filter { it.name == "Outbound" }.flatMap { it.tram }
+        (currentState as ViewState.Content).viewData.stopName shouldBe Stops.MAR.name
+        currentState.viewData.trams shouldContainAll outboundViewList
     }
 
     @Test

@@ -27,7 +27,7 @@ class ListingFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         swipe_refresh_layout.setOnRefreshListener(this)
-        listingViewModel.currentLuasInfo.observe(this, Observer { it ->
+        listingViewModel.currentLuasInfo.observe(this, Observer {
             when (it) {
                 is ViewState.Content -> {
                     list_group.visibility = View.VISIBLE
@@ -35,21 +35,21 @@ class ListingFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
                     loader.visibility = View.GONE
                     swipe_refresh_layout.isRefreshing = false
 
-                    tram_search_time.text = it.listingViewData.time
-                    tram_stop_text_view.text = it.listingViewData.stopName
+                    tram_search_time.text = it.viewData.time
+                    tram_stop_text_view.text = it.viewData.stopName
 
 
                     if (recycler_tram.adapter == null) {
                         recycler_tram.apply {
                             adapter =
                                 ListingAdapter(
-                                    it.listingViewData.trams
+                                    it.viewData.trams
                                 )
                             layoutManager = LinearLayoutManager(context)
                         }
                     } else {
                         (recycler_tram.adapter as ListingAdapter).apply {
-                            setTramList(it.listingViewData.trams)
+                            setTramList(it.viewData.trams)
                             notifyDataSetChanged()
                         }
                     }

@@ -12,118 +12,64 @@ import java.util.*
 
 class ListingViewModel(private val ListingRepository: ListingRepository) : ViewModel() {
 
-
     private val _currentLuasInfo = MutableLiveData<ViewState<ListingViewData>>()
     val currentLuasInfo: LiveData<ViewState<ListingViewData>> = _currentLuasInfo
 
     fun onUILoad(calendar: Calendar) {
         _currentLuasInfo.postValue(ViewState.Loading)
         viewModelScope.launch {
-            when (calendar.get(Calendar.HOUR_OF_DAY)) {
-                in 0..11 -> when (val networkResponse =
-                    ListingRepository.getLUASForecast(Stops.MAR)) {
-                    is NetworkResult.Success<*> -> {
-                        val stopInfo = networkResponse.data as StopInfo
-                        val trams = stopInfo.direction.filter { it.name == "Outbound" }
-                            .flatMap { it.tram }
-                        trams.apply {
-                            forEach {
-                                if (it.dueMins.isDigitsOnly()) {
-                                    it.dueMins.plus(" min")
-                                }
-                            }
-                        }
-                        val viewData = ListingViewData(
-                            stopName = stopInfo.stop,
-                            trams = trams,
-                            time = stopInfo.created.split("T").last()
-                        )
-                        _currentLuasInfo.value = ViewState.Content(viewData)
-                    }
-                    is NetworkResult.Error -> {
-                        _currentLuasInfo.value = ViewState.Error(networkResponse.reason)
-                    }
+            val sourceStop: Stops = when (calendar.get(Calendar.HOUR_OF_DAY)) {
+                in 0..11 -> {
+                    Stops.MAR
                 }
-                in 13..23 -> when (val networkResponse =
-                    ListingRepository.getLUASForecast(Stops.STI)) {
-                    is NetworkResult.Success<*> -> {
-                        val stopInfo = networkResponse.data as StopInfo
-                        val trams = stopInfo.direction.filter { it.name == "Inbound" }
-                            .flatMap { it.tram }.apply {
-                                map {
-
-                                    if (it.dueMins.isDigitsOnly()) {
-                                        it.dueMins = it.dueMins.plus(" min")
-                                    }
-                                }
-                            }
-
-                        val viewData = ListingViewData(
-                            stopName = stopInfo.stop,
-                            trams = trams,
-                            time = stopInfo.created.split("T").last()
-                        )
-                        _currentLuasInfo.value = ViewState.Content(viewData)
-                    }
-                    is NetworkResult.Error -> {
-                        _currentLuasInfo.value = ViewState.Error(networkResponse.reason)
-                    }
+                in 13..23 -> {
+                    Stops.STI
                 }
                 12 -> {
                     when (calendar.get(Calendar.MINUTE)) {
-                        0 -> when (val networkResponse =
-                            ListingRepository.getLUASForecast(Stops.MAR)) {
-                            is NetworkResult.Success<*> -> {
-                                val stopInfo = networkResponse.data as StopInfo
-                                val trams = stopInfo.direction.filter { it.name == "Outbound" }
-                                    .flatMap { it.tram }
-                                trams.apply {
-                                    forEach {
-                                        if (it.dueMins.isDigitsOnly()) {
-                                            it.dueMins.plus(" min")
-                                        }
-                                    }
-                                }
-                                val viewData = ListingViewData(
-                                    stopName = stopInfo.stop,
-                                    trams = trams,
-                                    time = stopInfo.created.split("T").last()
-                                )
-                                _currentLuasInfo.value = ViewState.Content(viewData)
-                            }
-                            is NetworkResult.Error -> {
-                                _currentLuasInfo.value = ViewState.Error(networkResponse.reason)
-                            }
+                        0 -> {
+                            Stops.MAR
                         }
-                        else -> when (val networkResponse =
-                            ListingRepository.getLUASForecast(Stops.STI)) {
-                            is NetworkResult.Success<*> -> {
-                                val stopInfo = networkResponse.data as StopInfo
-                                val trams = stopInfo.direction.filter { it.name == "Inbound" }
-                                    .flatMap { it.tram }
-                                trams.apply {
-                                    forEach {
-                                        if (it.dueMins.isDigitsOnly()) {
-                                            it.dueMins.plus(" min")
-                                        }
-                                    }
-                                }
-                                val viewData = ListingViewData(
-                                    stopName = stopInfo.stop,
-                                    trams = trams,
-                                    time = stopInfo.created.split("T").last()
-                                )
-                                _currentLuasInfo.value = ViewState.Content(viewData)
-                            }
-                            is NetworkResult.Error -> {
-                                _currentLuasInfo.value = ViewState.Error(networkResponse.reason)
-                            }
+                        else -> {
+                            Stops.STI
                         }
                     }
+                }
+                else -> {
+                    Stops.STI
+                }
+            }
+
+            when (val networkResponse =
+                ListingRepository.getLUASForecast(sourceStop)) {
+                is NetworkResult.Success -> {
+                    val stopInfo = networkResponse.data
+                    val filteredTrams = if (sourceStop == Stops.STI) {
+                        stopInfo.getInbound()
+                    } else {
+                        stopInfo.getOutbound()
+                    }
+                    val trams: List<TramItem> = filteredTrams
+                        .flatMap { it.tram }
+                        .map {
+                            TramItem(
+                                destination = it.destination,
+                                dueMins = it.dueMins,
+                                isDue = it.dueMins.isDigitsOnly().not()
+                            )
+                        }
+
+                    val viewData = ListingViewData(
+                        stopName = stopInfo.stop,
+                        trams = trams,
+                        time = stopInfo.created.split("T").last()
+                    )
+                    _currentLuasInfo.postValue(ViewState.Content(viewData))
+                }
+                is NetworkResult.Error -> {
+                    _currentLuasInfo.postValue(ViewState.Error(networkResponse.reason))
                 }
             }
         }
     }
-
-
 }

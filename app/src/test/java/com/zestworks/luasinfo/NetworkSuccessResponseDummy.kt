@@ -1,9 +1,7 @@
 package com.zestworks.luasinfo
 
-import com.zestworks.luasinfo.listing.Direction
-import com.zestworks.luasinfo.listing.StopInfo
-import com.zestworks.luasinfo.listing.Stops
-import com.zestworks.luasinfo.listing.Tram
+import com.zestworks.luasinfo.extensions.isDigitsOnly
+import com.zestworks.luasinfo.listing.*
 
 val marStopInfo = StopInfo(
     stop = Stops.MAR.name,
@@ -18,6 +16,9 @@ val marStopInfo = StopInfo(
                 Tram(
                     destination = " ",
                     dueMins = " "
+                ), Tram(
+                    destination = " ",
+                    dueMins = "Due"
                 )
             )
         )
@@ -36,9 +37,29 @@ val marStopInfo = StopInfo(
              tram = listOf(
                  Tram(
                      destination = " ",
-                     dueMins = " "
+                     dueMins = "7"
+                 ),
+                 Tram(
+                     destination = " ",
+                     dueMins = "Due"
                  )
              )
          )
      )
  )
+
+val outboundViewList = marStopInfo.getOutbound().flatMap { it.tram }.map {
+    TramItem(
+        destination = it.destination,
+        dueMins = it.dueMins,
+        isDue = it.dueMins.isDigitsOnly().not()
+    )
+}
+
+val inboundViewList = marStopInfo.getInbound().flatMap { it.tram }.map {
+    TramItem(
+        destination = it.destination,
+        dueMins = it.dueMins,
+        isDue = it.dueMins.isDigitsOnly().not()
+    )
+}

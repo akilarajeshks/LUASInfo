@@ -9,29 +9,37 @@ import com.tickaroo.tikxml.annotation.Xml
 @Xml
 data class Direction(
     @Attribute
-    var name: String = "",
+    val name: String,
     @Element
-    var tram: List<Tram>
+    val tram: List<Tram>
 )
 
 @Xml
 data class Tram(
     @Attribute
-    var destination: String = "",
+    val destination: String,
     @Attribute
-    var dueMins: String = ""
+    val dueMins: String
 )
 
 @Xml
 data class StopInfo(
     @Attribute
-    var stop: String = "",
+    val stop: String,
     @Attribute
-    var created: String = "",
+    val created: String,
     @PropertyElement
-    var message: String = "",
+    val message: String,
     @Attribute
-    var stopAbv: String = "",
+    val stopAbv: String,
     @Element
-    var direction: List<Direction>
-)
+    val direction: List<Direction>
+) {
+    fun getInbound(): List<Direction> = direction.filter {
+        it.name == "Inbound"
+    }
+
+    fun getOutbound(): List<Direction> = direction.filter {
+        it.name == "Outbound"
+    }
+}

@@ -7,7 +7,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.zestworks.luasinfo.R
 
-class ListingAdapter(private var listOfTrams: List<Tram>) :
+class ListingAdapter(private var listOfTrams: List<TramItem>) :
     RecyclerView.Adapter<ListingAdapter.ListingViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListingViewHolder =
@@ -22,11 +22,17 @@ class ListingAdapter(private var listOfTrams: List<Tram>) :
     override fun getItemCount(): Int = listOfTrams.size
 
     override fun onBindViewHolder(holder: ListingViewHolder, position: Int) {
-        holder.destination.text = listOfTrams[position].destination
-        holder.eta.text = listOfTrams[position].dueMins
+        listOfTrams[position].apply {
+            holder.destination.text = destination
+            if (isDue)
+                holder.eta.text = dueMins
+            else
+                holder.eta.text =
+                    holder.itemView.context.resources.getString(R.string.due_mins, dueMins)
+        }
     }
 
-    fun setTramList(tramList: List<Tram>) {
+    fun setTramList(tramList: List<TramItem>) {
         listOfTrams = tramList
     }
 
